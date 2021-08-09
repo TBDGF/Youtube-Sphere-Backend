@@ -6,6 +6,7 @@ import com.privoce.youtube_sphere_backend.mapper.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -21,5 +22,13 @@ public class RecordService {
     }
     public void cancelRecord(Integer recordId) {
         recordMapper.cancelRecord(recordId);
+    }
+    public List<String> getLiked(String userId){
+        List<Record> list=getRecordsById(userId);
+        List<String> res =new ArrayList<>();
+        for (Record listItem:list){
+            res.add(listItem.getUrl());
+        }
+        return res;
     }
 }
