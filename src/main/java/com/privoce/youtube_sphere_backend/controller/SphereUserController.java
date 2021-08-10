@@ -1,13 +1,14 @@
 package com.privoce.youtube_sphere_backend.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.privoce.youtube_sphere_backend.entity.SphereUser;
 import com.privoce.youtube_sphere_backend.entity.VideoInfo;
 import com.privoce.youtube_sphere_backend.service.GraphDBService;
+import com.privoce.youtube_sphere_backend.service.RecordService;
 import com.privoce.youtube_sphere_backend.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,6 +18,8 @@ public class SphereUserController {
     GraphDBService graphDBService;
     @Autowired
     YoutubeService youtubeService;
+    @Autowired
+    RecordService recordService;
 
 
     @GetMapping("/connect")
@@ -25,7 +28,18 @@ public class SphereUserController {
     }
 
     @GetMapping("/connect/liked")
-    public JSONObject getFriendsLiked(String userId){
-        return youtubeService.getVideoInfo("https://www.youtube.com/watch?v=Ausb8E2zJJk");
+    public List<VideoInfo> getFriendsLiked(String userId){
+        List<SphereUser> list=graphDBService.getFriends(userId);
+        List<VideoInfo> videoInfos=new ArrayList<>();
+        for (SphereUser friend:list){
+            List<String> likedList= recordService.getLiked(friend.getUserId());
+            for (String url:likedList){
+                VideoInfo temp= youtubeService.getVideoInfo(url);
+                temp.setUserId(friend.getUserId());
+                temp.setNickname(friend.getNickname());
+                videoInfos.add(temp);
+            }
+        }
+        return videoInfos;
     }
 }
