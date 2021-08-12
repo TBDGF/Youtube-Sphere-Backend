@@ -23,12 +23,8 @@ public class RecordService {
     public void cancelRecord(Integer recordId) {
         recordMapper.cancelRecord(recordId);
     }
-    public List<String> getLiked(String userId){
+    public List<Record> getLiked(String userId){
         List<Record> list=getRecordsById(userId);
-        List<String> res =new ArrayList<>();
-        for (Record listItem:list){
-            res.add(listItem.getUrl());
-        }
-        return res;
+        return list;
     }
 }

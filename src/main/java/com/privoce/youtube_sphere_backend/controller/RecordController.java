@@ -41,7 +41,7 @@ public class RecordController {
     }
 
     @GetMapping("/likes")
-    public List<String> getLikes(String userId){
+    public List<Record> getLikes(String userId){
         return recordService.getLiked(userId);
     }
 }

@@ -2,6 +2,7 @@ package com.privoce.youtube_sphere_backend.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.privoce.youtube_sphere_backend.entity.Record;
 import com.privoce.youtube_sphere_backend.entity.SphereUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,27 @@ public class GraphDBService {
                 list.add(new SphereUser((String) temp.getObject("userId",List.class).get(0),(String) temp.getObject("nickname",List.class).get(0)));
             }
             for (SphereUser user:list) {
-                user.setLiked(recordService.getLiked(user.getUserId()));
+                List<String> liked=new ArrayList<>();
+                for (Record record:recordService.getLiked(user.getUserId())){
+                    liked.add(record.getUrl());
+                }
+                user.setLiked(liked);
             }
         }
         return list;
+    }
+
+    public SphereUser getUser(String userId){
+        SphereUser user=new SphereUser();
+        JSONObject originObject=restTemplate.getForObject("https://aws.nicegoodthings.com/user?userId="+userId,JSONObject.class);
+        JSONObject fixedObject=originObject.getJSONObject("data").getJSONObject("user");
+        user.setUserId((String) fixedObject.getObject("userId",List.class).get(0));
+        user.setNickname((String) fixedObject.getObject("nickname",List.class).get(0));
+        List<String> liked=new ArrayList<>();
+        for (Record record:recordService.getLiked(user.getUserId())){
+            liked.add(record.getUrl());
+        }
+        user.setLiked(liked);
+        return user;
     }
 }
