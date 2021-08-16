@@ -3,13 +3,17 @@ package com.privoce.youtube_sphere_backend.controller;
 import com.privoce.youtube_sphere_backend.entity.Record;
 import com.privoce.youtube_sphere_backend.entity.SphereUser;
 import com.privoce.youtube_sphere_backend.entity.VideoInfo;
+import com.privoce.youtube_sphere_backend.service.AuthingService;
 import com.privoce.youtube_sphere_backend.service.GraphDBService;
 import com.privoce.youtube_sphere_backend.service.RecordService;
 import com.privoce.youtube_sphere_backend.service.YoutubeService;
+import cn.authing.core.types.User;
 import org.apache.ibatis.ognl.IntHashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +28,18 @@ public class SphereUserController {
     YoutubeService youtubeService;
     @Autowired
     RecordService recordService;
+    @Autowired
+    AuthingService authingService;
 
 
     @GetMapping("/connect")
-    public List<SphereUser> getFriends(String userId){
-        return graphDBService.getFriends(userId);
+    public List<User> getFriends(String userId) throws IOException {
+        List<User> result = new ArrayList<>();
+        List<SphereUser> rawUsers = graphDBService.getFriends(userId);
+        for(SphereUser user:rawUsers) {
+            result.add(authingService.getUserById(user.getUserId()));
+        }
+        return result;
     }
 
     @GetMapping("/connect/liked")
