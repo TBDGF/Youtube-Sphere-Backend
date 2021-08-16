@@ -52,9 +52,8 @@ public class SphereUserController {
                     videoInfos.get(index).getUserId().add(record.getUserId());
                     videoInfos.get(index).getNickname().add(graphDBService.getUser(record.getUserId()).getNickname());
                 }
-
             }
         }
-        return videoInfos;
+        return videoInfos.size()>4?videoInfos.subList(0,4):videoInfos;
     }
 }
