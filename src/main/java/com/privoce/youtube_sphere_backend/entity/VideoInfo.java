@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class VideoInfo {
-    String videoId,videoTitle,videoThumbnail,videoUrl;
+    String videoId,videoTitle,videoThumbnail,videoUrl,videoDescription;
     List<String> userId,nickname;
 }

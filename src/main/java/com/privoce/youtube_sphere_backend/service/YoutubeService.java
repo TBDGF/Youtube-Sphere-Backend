@@ -23,6 +23,7 @@ public class YoutubeService {
         resObj.put("videoTitle",tempArray.getObject(0,JSONObject.class).getObject("snippet",JSONObject.class).get("title"));
         resObj.put("videoThumbnail",tempArray.getObject(0,JSONObject.class).getObject("snippet",JSONObject.class).getObject("thumbnails",JSONObject.class).getObject("medium", JSONObject.class).get("url"));
         resObj.put("videoUrl",url);
+        resObj.put("videoDescription",tempArray.getObject(0,JSONObject.class).getObject("snippet",JSONObject.class).get("description"));
         VideoInfo videoInfo=resObj.toJavaObject(VideoInfo.class);
         return videoInfo;
     }
