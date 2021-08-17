@@ -10,10 +10,7 @@ import com.privoce.youtube_sphere_backend.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -32,7 +29,9 @@ public class SphereUserController {
     }
 
     @GetMapping("/connect/liked")
-    public List<VideoInfo> getFriendsLiked(String userId){
+    public List<VideoInfo> getFriendsLiked(String userId,Integer num){
+        if (num==null)
+            num=4;
         Map<String,Integer> map=new HashMap<>();
         List<SphereUser> list=graphDBService.getFriends(userId);
         List<VideoInfo> videoInfos=new ArrayList<>();
@@ -54,6 +53,7 @@ public class SphereUserController {
                 }
             }
         }
-        return videoInfos.size()>4?videoInfos.subList(0,4):videoInfos;
+        Collections.reverse(videoInfos);
+        return videoInfos.size()>num?videoInfos.subList(0,num):videoInfos;
     }
 }
