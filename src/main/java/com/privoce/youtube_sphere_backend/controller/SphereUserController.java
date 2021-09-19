@@ -3,6 +3,7 @@ package com.privoce.youtube_sphere_backend.controller;
 import com.privoce.youtube_sphere_backend.entity.SphereUser;
 import com.privoce.youtube_sphere_backend.entity.VideoInfo;
 import com.privoce.youtube_sphere_backend.service.GraphDBService;
+import com.privoce.youtube_sphere_backend.service.NeoService;
 import com.privoce.youtube_sphere_backend.service.YoutubeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ public class SphereUserController {
     GraphDBService graphDBService;
     @Autowired
     YoutubeService youtubeService;
+    @Autowired
+    NeoService neoService;
 
 
     @GetMapping("/connect")
     public List<SphereUser> getFriends(String userId) {
-        return graphDBService.getFriends(userId);
+        return neoService.getFriends(userId);
     }
 
     @GetMapping("/connect/liked")
