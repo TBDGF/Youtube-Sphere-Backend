@@ -21,7 +21,7 @@ public class NeoService {
         List<SphereUser> result = new ArrayList<SphereUser>();
         List<Record> rawFriends = userMapper.getFriends(userId);
         for (Record user:rawFriends) {
-            result.add(new SphereUser(user.get("userId").asString(), user.get("username").asString()));
+            result.add(new SphereUser(user.get(0).asString(), "no_name"));
         }
         return result;
     }
