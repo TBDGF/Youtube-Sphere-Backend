@@ -26,7 +26,7 @@ public class UserMapper implements AutoCloseable{
             List<Record> friendsList = session.writeTransaction(new TransactionWork<List<Record>>() {
                 @Override
                 public List<Record> execute(Transaction transaction) {
-                    Result result = transaction.run("match(me:user{userId:'6035513be4692bb589f139e4'})-[:friend{platform:'youtube'}]->(friend) return friend");
+                    Result result = transaction.run("match(me:user{userId:'6035513be4692bb589f139e4'})-[:friend{platform:'youtube'}]->(friend) return friend.userId");
                     return result.list();
                 }
             });
@@ -39,7 +39,7 @@ public class UserMapper implements AutoCloseable{
             List<Record> friendsList = session.writeTransaction(new TransactionWork<List<Record>>() {
                 @Override
                 public List<Record> execute(Transaction transaction) {
-                    Result result = transaction.run("MATCH (me {userId: '6035513be4692bb589f139e4')-[:friend{platform:'youtube'}]->(friend)-[:reaction]->(video)" +
+                    Result result = transaction.run("MATCH (me:user{userId: '6035513be4692bb589f139e4'})-[:friend{platform:'youtube'}]->(friend)-[:like]->(video)" +
                                     "RETURN video");
                     return result.list();
                 }
