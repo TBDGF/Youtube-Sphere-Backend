@@ -18,34 +18,13 @@ import java.io.IOException;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/user")
-public class SphereUserController {
-    @Autowired
-    AuthingService authingService;
-    @Autowired
-    YoutubeService youtubeService;
+@RequestMapping("/api/video")
+public class YoutubeController {
     @Autowired
     NeoService neoService;
 
-
-    @GetMapping("/connect")
-    public List<User> getFriends(String userId) throws IOException {
-        return neoService.getFriends(userId);
-    }
-
-    @GetMapping("/connect/liked")
-    public List<VideoInfo> getFriendsLiked(String userId) throws IOException {
-        return neoService.getFriendsReaction(userId);
-    }
-
-    @PostMapping("/connect/liked")
-    public Record createReaction(@RequestBody  Reaction reaction){
-        return neoService.createReaction(reaction);
-    }
-
     @PostMapping("")
-    public Record createUser(@RequestBody Map<String,String> map){
-        return neoService.createUser(map.get("userId"));
+    public Record createVideo(@RequestBody  Map<String,String> map){
+        return neoService.createVideo(map.get("videoId"));
     }
-
 }

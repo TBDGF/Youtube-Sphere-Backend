@@ -11,11 +11,9 @@ public class YoutubeService {
     String url="https://www.googleapis.com/youtube/v3/videos";
     RestTemplate restTemplate = new RestTemplate();
 
-    public VideoInfo getVideoInfo(String url){
+    public VideoInfo getVideoInfo(String videoId){
         if (url==null)
             return null;
-        String videoId=url.substring(url.indexOf("v=")+2);
-        System.out.println(videoId);
         JSONObject originObj = restTemplate.getForObject("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyCyscKv2WHan-ZqdZAb63QJ_bWED5whJsw", JSONObject.class);
         JSONObject resObj=new JSONObject();
         JSONArray tempArray=originObj.getObject("items",JSONArray.class);

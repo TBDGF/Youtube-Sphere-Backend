@@ -1,5 +1,6 @@
 package com.privoce.youtube_sphere_backend.entity;
 
+import cn.authing.core.types.User;
 import lombok.Data;
 
 import java.util.List;
@@ -7,5 +8,5 @@ import java.util.List;
 @Data
 public class VideoInfo {
     String videoId,videoTitle,videoThumbnail,videoUrl,videoDescription;
-    List<String> userId,nickname;
+    List<User> userList;
 }

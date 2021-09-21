@@ -1,18 +1,15 @@
 package com.privoce.youtube_sphere_backend.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class SphereUser {
-    String userId,nickname;
+    String userId;
     List<String> liked;
-
-    public SphereUser(String userId,String nickname){
-        this.userId=userId;
-        this.nickname=nickname;
-    }
 }
