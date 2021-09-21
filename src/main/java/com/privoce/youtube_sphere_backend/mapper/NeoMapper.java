@@ -67,6 +67,22 @@ public class NeoMapper implements AutoCloseable{
         }
     }
 
+    public Record createRelation(final String meId,final String friendId,final String platform) {
+        try (Session session = driver.session()) {
+            Record result = session.writeTransaction(new TransactionWork<Record>() {
+                @Override
+                public Record execute(Transaction transaction) {
+                    Result result = transaction.run( "match (me:user{userId:$meId}),(friend:user{userId:$friendId}) " +
+                                    "merge (me)-[r:friend{platform:$platform}]->(friend) " +
+                                    "return r",
+                            parameters( "meId", meId,"friendId",friendId,"platform",platform) );
+                    return result.single();
+                }
+            });
+            return result;
+        }
+    }
+
     public Record createUser(final String userId) {
         try (Session session = driver.session()) {
             Record result = session.writeTransaction(new TransactionWork<Record>() {
