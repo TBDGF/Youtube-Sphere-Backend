@@ -25,7 +25,7 @@ public class NeoMapper implements AutoCloseable{
             List<Record> friendsList = session.writeTransaction(new TransactionWork<List<Record>>() {
                 @Override
                 public List<Record> execute(Transaction transaction) {
-                    Result result = transaction.run("match(me:user{userId:$userId})-[:friend{platform:'youtube'}]->(friend) return friend.userId"
+                    Result result = transaction.run("match(me:user{userId:$userId})-[:friend{platform:'youtube'}]-(friend) return distinct friend.userId"
                     , parameters( "userId", userId));
                     return result.list();
                 }
@@ -39,7 +39,7 @@ public class NeoMapper implements AutoCloseable{
             List<Record> friendsList = session.writeTransaction(new TransactionWork<List<Record>>() {
                 @Override
                 public List<Record> execute(Transaction transaction) {
-                    Result result = transaction.run("MATCH (me:user{userId: $userId})-[:friend{platform:'youtube'}]->(friend)-[l:like]->(video) " +
+                    Result result = transaction.run("MATCH (me:user{userId: $userId})-[:friend{platform:'youtube'}]-(friend)-[l:like]->(video) " +
                             "RETURN friend.userId,video.videoId,l.datetime,l.reactiontime",
                             parameters("userId", userId));
                     return result.list();
@@ -54,12 +54,11 @@ public class NeoMapper implements AutoCloseable{
             Record result = session.writeTransaction(new TransactionWork<Record>() {
                 @Override
                 public Record execute(Transaction transaction) {
-                    Result result = transaction.run( "match (u:user{userId:$userId}),(v:video{videoId:$videoId}) " +
-                                    "merge (u)-[l:like]->(v)\n" +
-                                    "on create set l.datetime=$datetime,l.reactiontime=$reactionTime " +
-                                    "on match set l.datetime=$datetime,l.reactiontime=$reactionTime " +
-                                    "return l",
-                            parameters( "userId", userId,"videoId",videoId,"datetime",datetime,"reactionTime",reactionTime) );
+                    Result result = transaction.run( "MATCH (u:user{userId: $uid})\n" +
+                                    "MERGE (v:video{videoId: $vid})\n" +
+                                    "MERGE (u)-[r:like{datetime: $datetime, reactiontime: $reactionTime}]->(v)\n" +
+                                    "RETURN r",
+                            parameters( "uid", userId,"vid",videoId,"datetime",datetime,"reactionTime",reactionTime) );
                     return result.single();
                 }
             });
@@ -72,8 +71,9 @@ public class NeoMapper implements AutoCloseable{
             Record result = session.writeTransaction(new TransactionWork<Record>() {
                 @Override
                 public Record execute(Transaction transaction) {
-                    Result result = transaction.run( "match (me:user{userId:$meId}),(friend:user{userId:$friendId}) " +
-                                    "merge (me)-[r:friend{platform:$platform}]->(friend) " +
+                    Result result = transaction.run( "match (me:user{userId:$meId})\n" +
+                                    "merge (friend:user{userId:$friendId})\n" +
+                                    "merge (me)-[r:friend{platform:$platform}]-(friend)\n" +
                                     "return r",
                             parameters( "meId", meId,"friendId",friendId,"platform",platform) );
                     return result.single();
@@ -94,6 +94,20 @@ public class NeoMapper implements AutoCloseable{
                 }
             });
             return result;
+        }
+    }
+
+    public Boolean checkVideo(final String videoId) {
+        try (Session session = driver.session()) {
+            List<Record> resultList = session.writeTransaction(new TransactionWork<List<Record>>() {
+                @Override
+                public List<Record> execute(Transaction transaction) {
+                    Result result = transaction.run("MATCH (v:video{videoId: $vid}) RETURN v",
+                            parameters("vid", videoId));
+                    return result.list();
+                }
+            });
+            return resultList.isEmpty();
         }
     }
 

@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class VideoInfo {
     String videoId,videoTitle,videoThumbnail,videoUrl,videoDescription;
-    List<User> userList;
+    List<String> userList;
 }

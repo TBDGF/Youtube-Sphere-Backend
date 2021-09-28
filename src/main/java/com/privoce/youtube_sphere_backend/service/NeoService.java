@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public class NeoService {
-    NeoMapper neoMapper = new NeoMapper("bolt://ec2-18-166-42-129.ap-east-1.compute.amazonaws.com:7687", Secret.NEO_USER, Secret.NEO_PASSWORD);
+    NeoMapper neoMapper = new NeoMapper("bolt://127.0.0.1:7687", Secret.NEO_USER, Secret.NEO_PASSWORD);
 
     public List<Record> getFriends(String userId) throws IOException {
         return neoMapper.getFriends(userId);
