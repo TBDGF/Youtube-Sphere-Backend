@@ -44,20 +44,20 @@ public class UserController {
     public List<VideoInfo> getFriendsLiked(String userId) throws IOException {
         List<Record> records= neoService.getFriendsReaction(userId);
         List<VideoInfo> result=new ArrayList<>();
-        Map<String,List<User>> map=new HashMap<>();
+        Map<String,List<String>> map=new HashMap<>();
         for (Record record:records){
             String videoId=record.get("video.videoId").asString();
             String friendId=record.get("friend.userId").asString();
             if(map.get(videoId)!=null){
-                map.get(videoId).add(authingService.getUserById(friendId));
+                map.get(videoId).add(authingService.getUserById(friendId).getUsername());
             }else {
-                List<User> temp=new ArrayList<>();
-                temp.add(authingService.getUserById(friendId));
+                List<String> temp=new ArrayList<>();
+                temp.add(authingService.getUserById(friendId).getUsername());
                 map.put(videoId,temp);
             }
         }
         if (!map.isEmpty()){
-            for (Map.Entry<String,List<User>> entry:map.entrySet()){
+            for (Map.Entry<String,List<String>> entry:map.entrySet()){
                 VideoInfo temp=youtubeService.getVideoInfo(entry.getKey());
                 temp.setUserList(entry.getValue());
                 result.add(temp);
